@@ -1,6 +1,7 @@
 extends Node
 
 export (PackedScene) var mob_scene
+export (PackedScene) var mega_mob_scene
 export (PackedScene) var bullet_scene
 
 var Player: Object = null
@@ -8,13 +9,22 @@ var score = 0
 var is_recoil = true
 var bullet_speed = 600.0
 
+var default_hp = 100
+
+var Health_Bar: Object = null
+
 func _ready():
 	randomize()
 	Player = $Player
+	Health_Bar = $HUD/HealthBar
+	Health_Bar.hide()
 
 func new_game():
 	score = 0
 	$HUD.update_score(score)
+	
+	Health_Bar.set_value(default_hp)
+	Health_Bar.show()
 	
 	get_tree().call_group("mobs", "queue_free")
 	$Player.start($StartPosition.position)
@@ -27,9 +37,19 @@ func new_game():
 	$MobTimer.start()
 	is_recoil = false
 	
+func take_damage(damage):
+	Health_Bar.deplete(damage)
+	if Health_Bar.value <= 0:
+		Player.die()
+		game_over()
+	
 func game_over():
+	is_recoil = true
+	$FireTimer.stop()
 	$ScoreTimer.stop()
 	$MobTimer.stop()
+	$FireTimer.stop()
+	$MegaMobTimer.stop()
 	$HUD.show_game_over()
 	$Music.stop()
 	$DeathSound.play()
@@ -66,3 +86,12 @@ func _on_ScoreTimer_timeout():
 
 func _on_FireTimer_timeout():
 	is_recoil = false
+
+
+func _on_MegaMobTimer_timeout():
+	var mob_spawn_location = $MobPath/MobSpawnLocation
+	mob_spawn_location.unit_offset = randf()
+	
+	var mega_mob = mega_mob_scene.instance()
+	add_child(mega_mob)
+	mega_mob.position = mob_spawn_location.position

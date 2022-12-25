@@ -1,5 +1,7 @@
 extends Node2D
 
+var damage = 10.0
+
 func _ready():
 	hide()
 

@@ -11,9 +11,9 @@ func show_message(text):
 	$MessageTimer.start()
 	
 func show_game_over():
-	show_message("Game Over")
+	show_message("Лох")
 	yield($MessageTimer, "timeout")
-	$MessageLabel.text = "Dodge the Creeps"
+	$MessageLabel.text = "Зомби-программисты из Тбилиси"
 	$MessageLabel.show()
 	yield(get_tree().create_timer(1.0), "timeout")
 	$Button.show()

@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=2]
+[gd_scene load_steps=11 format=2]
 
 [ext_resource path="res://Main.gd" type="Script" id=1]
 [ext_resource path="res://Mob.tscn" type="PackedScene" id=2]
@@ -8,15 +8,17 @@
 [ext_resource path="res://art/game-over.wav" type="AudioStream" id=6]
 [ext_resource path="res://Bullet.tscn" type="PackedScene" id=7]
 [ext_resource path="res://art/gunshot.mp3" type="AudioStream" id=8]
+[ext_resource path="res://MegaMob.tscn" type="PackedScene" id=9]
 
 [sub_resource type="Curve2D" id=1]
 _data = {
-"points": PoolVector2Array( 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 480, 0, 0, 0, 0, 0, 480, 720, 0, 0, 0, 0, 0, 720, 0, 0, 0, 0, 0, 0 )
+"points": PoolVector2Array( 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1040, 0, 0, 0, 0, 0, 1040, 320, 0, 0, 0, 0, 1040, 320, 0, 0, 0, 0, 1040, 600, 0, 0, 0, 0, 0, 600, 0, 0, 0, 0, 0, 0 )
 }
 
 [node name="Main" type="Node"]
 script = ExtResource( 1 )
 mob_scene = ExtResource( 2 )
+mega_mob_scene = ExtResource( 9 )
 bullet_scene = ExtResource( 7 )
 
 [node name="ColorRect" type="ColorRect" parent="."]
@@ -29,13 +31,13 @@ curve = SubResource( 1 )
 
 [node name="MobSpawnLocation" type="PathFollow2D" parent="MobPath"]
 
-[node name="MobTimer" type="Timer" parent="."]
-wait_time = 0.5
+[node name="HUD" parent="." instance=ExtResource( 4 )]
 
 [node name="Player" parent="." instance=ExtResource( 3 )]
 position = Vector2( -40, 40 )
 
-[node name="HUD" parent="." instance=ExtResource( 4 )]
+[node name="MobTimer" type="Timer" parent="."]
+wait_time = 0.5
 
 [node name="ScoreTimer" type="Timer" parent="."]
 
@@ -43,7 +45,7 @@ position = Vector2( -40, 40 )
 one_shot = true
 
 [node name="StartPosition" type="Position2D" parent="."]
-position = Vector2( 240, 440 )
+position = Vector2( 520, 320 )
 
 [node name="Music" type="AudioStreamPlayer" parent="."]
 stream = ExtResource( 5 )
@@ -56,12 +58,17 @@ stream = ExtResource( 8 )
 volume_db = 3.0
 
 [node name="FireTimer" type="Timer" parent="."]
-wait_time = 0.4
+wait_time = 0.3
 
-[connection signal="timeout" from="MobTimer" to="." method="_on_MobTimer_timeout"]
-[connection signal="hit" from="Player" to="." method="game_over"]
-[connection signal="shoot" from="Player" to="." method="shoot"]
+[node name="MegaMobTimer" type="Timer" parent="."]
+wait_time = 7.0
+one_shot = true
+autostart = true
+
 [connection signal="start_game" from="HUD" to="." method="new_game"]
 [connection signal="start_game" from="HUD" to="." method="_on_HUD_start_game"]
+[connection signal="hit" from="Player" to="." method="take_damage"]
+[connection signal="shoot" from="Player" to="." method="shoot"]
+[connection signal="timeout" from="MobTimer" to="." method="_on_MobTimer_timeout"]
 [connection signal="timeout" from="ScoreTimer" to="." method="_on_ScoreTimer_timeout"]
 [connection signal="timeout" from="FireTimer" to="." method="_on_FireTimer_timeout"]

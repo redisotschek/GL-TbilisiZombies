@@ -2,7 +2,9 @@ extends Area2D
 
 signal hit
 signal shoot
+var direction = Vector2.ZERO
 var _smoother_mouse_position: Vector2
+onready var sprite = get_node("Sprite")
 
 export var speed = 100.0
 var screen_size = Vector2.ZERO
@@ -12,10 +14,10 @@ func _ready():
 	hide()
 
 func _process(delta):
+	direction = Vector2.ZERO
 	_smoother_mouse_position = lerp(_smoother_mouse_position, get_global_mouse_position(), 1.0)
-	look_at(_smoother_mouse_position)
-	rotation += PI / 2
-	var direction = Vector2.ZERO
+	sprite.look_at(_smoother_mouse_position)
+	sprite.rotation += PI / 2
 	if Input.is_mouse_button_pressed(1):
 		emit_signal("shoot")
 	if Input.is_action_pressed("move_right"):
@@ -35,6 +37,9 @@ func _process(delta):
 	position.y = clamp(position.y,0, screen_size.y)
 		
 	
+func die():
+	hide()
+	$CollisionShape2D.set_deferred("disabled", true)
 
 func start(new_position):
 	position = new_position
@@ -42,8 +47,9 @@ func start(new_position):
 	$CollisionShape2D.disabled = false
 
 func _on_Player_body_entered(body):
-	pass
-#	if body.is_in_group("mobs"):
-#		hide()
-#		$CollisionShape2D.set_deferred("disabled", true)
-#		emit_signal("hit")
+	if body.is_in_group("mobs"):
+		emit_signal("hit", body.damage)
+
+
+func _on_MobileJoystick_use_move_vector(move_vector):
+	direction = move_vector
