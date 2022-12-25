@@ -8,6 +8,7 @@ var Player: Object = null
 var score = 0
 var is_recoil = true
 var bullet_speed = 600.0
+var mob_count = 5
 
 var default_hp = 100
 
@@ -35,7 +36,8 @@ func new_game():
 	yield($StartTimer, "timeout")
 	$ScoreTimer.start()
 	$MobTimer.start()
-	is_recoil = false
+	spawn_mobs()
+	is_recoil = false	
 	
 func take_damage(damage):
 	Health_Bar.deplete(damage)
@@ -49,7 +51,7 @@ func game_over():
 	$ScoreTimer.stop()
 	$MobTimer.stop()
 	$FireTimer.stop()
-	$MegaMobTimer.stop()
+	$MobIncreaseTimer.stop()
 	$HUD.show_game_over()
 	$Music.stop()
 	$DeathSound.play()
@@ -71,13 +73,18 @@ func shoot():
 		$FireTimer.start()
 
 func _on_MobTimer_timeout():
-	var mob_spawn_location = $MobPath/MobSpawnLocation
-	mob_spawn_location.unit_offset = randf()
-	
-	var mob = mob_scene.instance()
-	add_child(mob)
-	mob.position = mob_spawn_location.position
+	spawn_mobs()
 
+func spawn_mobs():
+	for i in range(mob_count):
+		var mob_spawn_location = $MobPath/MobSpawnLocation
+		mob_spawn_location.unit_offset = randf()
+		var mob = mob_scene.instance()
+		add_child(mob)
+		mob.position = mob_spawn_location.position
+		
+func _on_MobIncreaseTimer_timeout():
+	mob_count += 3
 
 func _on_ScoreTimer_timeout():
 	score += 1
@@ -95,3 +102,4 @@ func _on_MegaMobTimer_timeout():
 	var mega_mob = mega_mob_scene.instance()
 	add_child(mega_mob)
 	mega_mob.position = mob_spawn_location.position
+

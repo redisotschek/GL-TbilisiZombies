@@ -13,7 +13,8 @@ func _ready():
 	var player_node = NodePath(@"/root/Main/Player:position")
 	player = get_node(player_node)
 	speed = rand_range(min_speed, max_speed)
-	$HealthBar.get_node("HP").text = str(hp)
+	$HealthBar.value = hp
+	$HealthBar.max_value = hp
 #	$AnimatedSprite.play()
 #	var mob_types = $AnimatedSprite.frames.get_animation_names()
 #	$AnimatedSprite.animation = mob_types[randi() % mob_types.size()]
@@ -32,7 +33,7 @@ func turn(target):
 
 func take_damage(damage):
 	hp -= damage
-	$HealthBar.get_node("HP").text = str(hp)
+	$HealthBar.value = hp
 	if hp <= 0:
 		die()
 
@@ -41,6 +42,7 @@ func _on_VisibilityNotifier2D_screen_exited():
 
 
 func die():
+	emit_signal("kill")
 	queue_free()
 
 

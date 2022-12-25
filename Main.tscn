@@ -37,7 +37,7 @@ curve = SubResource( 1 )
 position = Vector2( -40, 40 )
 
 [node name="MobTimer" type="Timer" parent="."]
-wait_time = 0.5
+wait_time = 7.0
 
 [node name="ScoreTimer" type="Timer" parent="."]
 
@@ -58,17 +58,17 @@ stream = ExtResource( 8 )
 volume_db = 3.0
 
 [node name="FireTimer" type="Timer" parent="."]
-wait_time = 0.3
+wait_time = 0.5
 
-[node name="MegaMobTimer" type="Timer" parent="."]
-wait_time = 7.0
-one_shot = true
+[node name="MobIncreaseTimer" type="Timer" parent="."]
+wait_time = 15.0
 autostart = true
 
-[connection signal="start_game" from="HUD" to="." method="new_game"]
 [connection signal="start_game" from="HUD" to="." method="_on_HUD_start_game"]
+[connection signal="start_game" from="HUD" to="." method="new_game"]
 [connection signal="hit" from="Player" to="." method="take_damage"]
 [connection signal="shoot" from="Player" to="." method="shoot"]
 [connection signal="timeout" from="MobTimer" to="." method="_on_MobTimer_timeout"]
 [connection signal="timeout" from="ScoreTimer" to="." method="_on_ScoreTimer_timeout"]
 [connection signal="timeout" from="FireTimer" to="." method="_on_FireTimer_timeout"]
+[connection signal="timeout" from="MobIncreaseTimer" to="." method="_on_MobIncreaseTimer_timeout"]
